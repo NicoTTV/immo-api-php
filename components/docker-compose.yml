@@ -1,0 +1,48 @@
+version: '3'
+networks:
+  immo-api.net:
+    driver: bridge
+services:
+
+  # service api.immo : api pour la prise de commandes
+  #
+  api.immo:
+    image: 'canals/php:latest'
+    env_file: ../.env
+    ports:
+      - '2080:80'
+      - '1443:443'
+    volumes:
+      - ../public:/var/www/html
+      - ../src:/var/www/src
+      - ../vendor:/var/www/vendor
+      - ../.env:/var/www/.env
+    working_dir: /var/www/
+    networks:
+      immo-api.net:
+        aliases:
+          - api.immo.local
+    depends_on:
+      - immo.db
+
+      # service sql pour le stockage des commandes -
+      # utilisé par l'api order
+  immo.db:
+    image: 'mariadb:latest'
+    command: '--default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci'
+    env_file: ../.env
+    ports:
+      - '3307:3306'
+    networks:
+      - immo-api.net
+    volumes:
+      - ../sql:/var/sql
+
+      # service administration des bases sql
+      #
+  adminer:
+    image: adminer
+    ports:
+      - '8080:8080'
+    networks:
+      - immo-api.net
