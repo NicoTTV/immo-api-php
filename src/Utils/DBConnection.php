@@ -20,7 +20,7 @@ class DBConnection
             'username' => getenv('MYSQL_USER'),
             'password' => getenv('MYSQL_PASSWORD'),
             'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_0900_ai_ci',
+            'collation' => 'utf8mb4_unicode_ci',
             'strict' => false,
         ]);
         $capsule->bootEloquent();
